@@ -1,0 +1,36 @@
+// Functions
+
+/*
+  syntax:
+
+  RET_TYPE NAME(RET_TYPE PARAM_NAME, ...) {
+    ...
+    return VALUE;
+  }
+
+  generic syntax:
+    RET_TYPE NAME<T, ...>(RET_TYPE PARAM_NAME, ...) {
+      ...
+      return VALUE;
+    }
+*/
+
+// main entry point — return 0 is implicit
+i32 main() {
+  print("Hello, World!");
+}
+
+// with parameters
+u8 add(u8 a, u8 b) {
+  return a + b;
+}
+
+// no return
+void greet() {
+  print("Hello, World!");
+}
+
+// // generic function — not yet supported
+// T identity<T>(T val) {
+//   return val;
+// }

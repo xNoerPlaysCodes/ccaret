@@ -1,0 +1,36 @@
+// Types
+// C^ has different types compared to C & C++
+
+/*
+  Types:
+
+    Numerical:
+    -> i8, i16, i32, i64, i128, isize;
+    -> u8, u16, u32, u64, u128, usize;
+    -> f32, f64;
+
+    Special:
+    -> bool, char, void;
+
+    Strings:
+    -> string; a stack-allocated value type string.
+       Internally: struct { u8* data; u64 len; }
+    -> hstring; a heap-allocated string for dynamic growth.
+
+    Inferred:
+    -> auto; deduces type from the assigned value at compile time.
+*/
+
+i32 main() {
+  string name = "Prathmesh";     // stack value: {data, len}
+  u8 mut age = 17;
+  string const surname = "Barot";
+
+  usize length = name.len;       // pointer-sized unsigned
+  isize offset = -1;             // pointer-sized signed
+
+  // Inferred types
+  auto name2 = "Auto";           // deduced as string
+  auto mut counter = 0;          // deduced as i32
+  //... rest
+}

@@ -1,0 +1,76 @@
+// Error handling: error sets, error union (!), try, catch
+// error sets are separate from enums — compile-time tokens.
+
+/*
+  Syntax: Error set
+    error NAME { VARIANT, ... }
+
+  Syntax: Return type
+    TYPE!                  -> error set inferred by compiler
+    TYPE!ERROR_SET         -> single error set
+    TYPE!(A, B, ...)       -> multiple error sets
+
+  Syntax: Try / Catch
+    TYPE data = try FUNCTION();
+    TYPE data = try FUNCTION() catch |ERR| VALUE;
+    TYPE data = try FUNCTION() catch |ERR| { ...; VALUE };
+                  try FUNCTION() catch |ERR| { ...; return; };
+*/
+
+// Error sets
+error IO {
+  NotFound, PermissionDenied
+}
+
+error Net {
+  Timeout, Disconnected
+}
+
+// Inferred error set — compiler figures it out from try calls
+i32! read_config(string path) {
+  if path.len == 0 { return IO.NotFound; }
+  return 42;
+}
+
+// Single named error set
+i32!IO read_file(string path) {
+  if path.len == 0 { return IO.NotFound; }
+  return 42;
+}
+
+// Multiple error sets
+i32!(IO, Net) fetch_data(string url) {
+  if url.len == 0 { return IO.NotFound; }
+  if timeout { return Net.Timeout; }
+  return 200;
+}
+
+// Try — propagates error up
+i32! process_config(string path) {
+  i32 data = try read_config(path);
+  return data;
+}
+
+// Catch with fallback value — stops propagation
+i32 read_safe(string path) {
+  i32 data = try read_file(path) catch |e| -1;
+  return data;
+}
+
+// Catch block — last expression is fallback
+i32 read_logged(string path) {
+  i32 data = try read_file(path) catch |e| {
+    io.print("error: {e}");
+    -1
+  };
+  return data;
+}
+
+// Catch block with early return
+void try_process(string path) {
+  try read_file(path) catch |e| {
+    io.print("fatal: {e}");
+    return;
+  };
+  // process data...
+}

@@ -1,0 +1,17 @@
+// this is a variable and constant syntax example
+
+/*
+  syntax:
+  TYPE [MODIFIER<mut/const>] NAME = VALUE
+
+  we use mut/const after type instead of legacy C way to make variable constant.
+*/
+
+// Immutable variable
+string name = "Prathmesh"; // immutable by default (no mut modifier)
+
+// Mutable variable
+u8 mut age = 17;
+
+// Constant variable
+string const surname = "Barot";

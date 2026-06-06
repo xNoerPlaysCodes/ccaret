@@ -1,0 +1,48 @@
+// ────────────────────────────────────────────────────────────────────────────
+// DEFERRED TO v0.2.0+
+//
+// `impl` blocks (method dispatch on existing types) are part of the generic /
+// trait story and require monomorphization. Not in v0.1.0 — the parser
+// hard-errors on `impl` today. See ROADMAP.md §3.2 and §4.
+//
+// In v0.1.0, put methods as free functions taking `this& mut` as the first
+// parameter:
+//     void drone_ascend(Drone& mut d, i32 amount) { d.alt += amount; }
+// ────────────────────────────────────────────────────────────────────────────
+
+// Impl blocks: methods live separate from data structs
+
+/*
+  Syntax:
+    impl TYPE_NAME {
+      RET_TYPE METHOD(SELF_TOKEN, ...) {
+        ...
+      }
+    }
+
+  self tokens:
+    this      -> read-only copy
+    this&     -> immutable reference
+    this& mut -> mutable reference
+*/
+
+struct Drone {
+  i32 alt;
+}
+
+impl Drone {
+  void ascend(this& mut, i32 amount) {
+    this.alt += amount;
+  }
+
+  void land(this& mut) {
+    this.alt = 0;
+  }
+}
+
+i32 main() {
+  Drone mut d = Drone{alt = 100};
+  d.ascend(50);
+  d.land();
+  return 0;
+}

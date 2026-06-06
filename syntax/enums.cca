@@ -1,0 +1,27 @@
+// Enums: uniformly scoped lists using commas or newlines
+
+/*
+  Syntax:
+    enum NAME { VARIANT, ... }
+
+  With values:
+    enum NAME { VARIANT = VALUE, ... }
+*/
+
+// Simple enum
+enum Color {
+  Red, Green, Blue
+}
+
+// Enum with explicit values
+enum Status {
+  Idle = 0,
+  Busy = 5,
+  Error    // auto = 6
+}
+
+i32 main() {
+  Color c = Color.Red;
+  Status s = Status.Busy;
+  return 0;
+}

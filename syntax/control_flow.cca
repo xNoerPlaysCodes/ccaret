@@ -1,0 +1,84 @@
+// Control flow: if/elif/else, for, while, loop, match
+// No parens around conditions — just expression then block.
+
+/*
+  Syntax:
+
+  if CONDITION { ... }
+  elif CONDITION { ... }
+  else { ... }
+
+  // C-style for
+  for TYPE NAME = INIT; CONDITION; STEP { ... }
+
+  // Range for
+  for TYPE NAME = START..END { ... }
+
+  // Labeled for (break/continue targets)
+  for<LABEL> ... { break LABEL; continue LABEL; }
+
+  while CONDITION { ... }
+  loop { ... }
+
+  match VALUE {
+    PATTERN => { ... }
+    _ => { ... }
+  }
+*/
+
+i32 main() {
+  i32 x = 5;
+
+  // if / elif / else
+  if x > 10 {
+    print(">10");
+  } elif x > 0 {
+    print("positive");
+  } else {
+    print("<=0");
+  }
+
+  // C-style for
+  for i32 i = 0; i < 5; i++ {
+    print("{d}", i);
+  }
+
+  // Range for
+  for i32 j = 0..10 {
+    print("{d}", j);
+  }
+
+  // While
+  bool mut running = true;
+  while running {
+    running = false;
+  }
+
+  // Loop (infinite)
+  loop {
+    break;
+  }
+
+  // Labeled break
+  for<outer> i32 a = 0..5 {
+    for<inner> i32 b = 0..5 {
+      if b == 3 { break outer; }
+    }
+  }
+
+  // Labeled continue
+  for<skip> i32 c = 0..10 {
+    if c % 2 == 0 { continue skip; }
+    print("{d}", c); // odds only
+  }
+
+  // Match
+  string status = "ok";
+  match status {
+    "ok" => { print("all good"); }
+    "err" => { print("error"); }
+    _ => { print("unknown"); }
+  }
+
+  return 0;
+}

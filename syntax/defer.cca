@@ -1,0 +1,38 @@
+// Defer: delay execution until parent scope closes
+// Multiple defers run LIFO (last declared, first executed).
+
+/*
+  Syntax:
+    defer EXPRESSION;
+    defer { STATEMENT; ... };
+*/
+
+i32 main() {
+  // Single defer
+  void* data = c.malloc(100);
+  defer c.free(data);
+
+  // Block defer — multiple statements
+  void* a = c.malloc(64);
+  defer {
+    c.free(a);
+    io.print("cleaned a");
+  };
+
+  void* b = c.malloc(128);
+  defer c.free(b);     // b freed first, then block, then data (LIFO)
+
+  // Defer with mutation
+  bool mut ready = false;
+  defer ready = true;
+
+  // Defer in nested block
+  {
+    i32* inner = c.malloc(32);
+    defer c.free(inner);
+    // inner freed at block exit, not function exit
+  }
+
+  // ... rest of function ...
+  return 0;
+}  // b freed, a freed + cleaned, data freed, ready = true

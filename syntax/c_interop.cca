@@ -1,0 +1,40 @@
+// C Interoperability
+//
+// Declare with extern c, call via c. prefix.
+// import std.c has common libc pre-declared.
+// import c "header.h" reads C headers at compile time.
+// link "lib" passes -llib to the linker.
+
+import std.c;
+
+// Custom C declarations
+extern c {
+  void* malloc(usize size);
+  void free(void* ptr);
+  usize strlen(u8* str);
+}
+
+// Single declaration
+extern c i32 puts(u8* s);
+
+// Link external library (optional, only if needed)
+// link "m";
+
+// Export for C consumption
+export i32 double_it(i32 x) {
+  return x * 2;
+}
+
+i32 main() {
+  string msg = "hello from C^";
+
+  c.printf("%s\n", msg.data);
+  c.puts(msg.data);
+
+  void* p = c.malloc(64);
+  c.free(p);
+
+  usize len = c.strlen(msg.data);
+
+  return 0;
+}

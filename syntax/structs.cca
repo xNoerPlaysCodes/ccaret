@@ -1,0 +1,44 @@
+// Structs: contiguous fixed memory properties separated by semicolons
+// Fields can have default values — omitted at init uses the default.
+//
+// Note: <T> is unambiguous in struct definitions because the
+// `struct` keyword ensures < is never read as less-than.
+
+/*
+  Syntax: Normal
+    struct NAME {
+      TYPE FIELD_NAME;
+      TYPE FIELD_NAME = DEFAULT_VALUE;  -> with default
+      ... add as many fields as needed.
+    }
+
+  Syntax: Generic
+    struct NAME<T, ...> {
+      T FIELD_NAME;
+      ... rest as many as needed.
+    }
+*/
+
+// Normal struct with default values
+struct Person {
+  string name = "unknown";
+  i32 age = 0;
+}
+
+// Generic struct
+struct Pair<T, U> {
+  T first;
+  U second;
+}
+
+i32 main() {
+  // uses defaults for both fields
+  Person mut default_person = Person{};
+
+  // override some fields
+  Person mut person = Person{name = "Prathmesh"; age = 17};
+  person.name = "Prathmesh Barot";
+
+  Pair<i32, string> mut pair = Pair{first = 1; second = "hello"};
+  return 0;
+}

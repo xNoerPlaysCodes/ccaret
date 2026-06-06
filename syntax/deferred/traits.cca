@@ -1,0 +1,38 @@
+// ────────────────────────────────────────────────────────────────────────────
+// DEFERRED TO v0.2.0+
+//
+// Traits (compile-time interface contracts) are the second half of the
+// generics story and require monomorphization. Not in v0.1.0 — the parser
+// hard-errors on `trait` today. See ROADMAP.md §3.2 and §4.
+//
+// In v0.1.0, use free functions or `match` on an enum tag to dispatch.
+// ────────────────────────────────────────────────────────────────────────────
+
+// Traits: compile-time interface contracts with zero runtime overhead
+// (if you prefer `behave` keyword instead of `trait`, tell me)
+
+/*
+  Syntax:
+    trait NAME {
+      RET_TYPE METHOD(SELF_TOKEN, ...);
+    }
+
+  Implementation:
+    impl TYPE to TRAIT_NAME {
+      RET_TYPE METHOD(SELF_TOKEN, ...) { ... }
+    }
+*/
+
+trait Agent {
+  void task(this& mut);
+}
+
+struct Drone {
+  i32 alt;
+}
+
+impl Drone to Agent {
+  void task(this& mut) {
+    print("Drone executing task");
+  }
+}

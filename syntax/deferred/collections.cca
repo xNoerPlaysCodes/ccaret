@@ -1,0 +1,73 @@
+// ────────────────────────────────────────────────────────────────────────────
+// DEFERRED TO v0.2.0+
+//
+// Generic collections (`vec<T>`, `map<K,V>`, `set<T>`) require language-level
+// generics and monomorphization, which are not in v0.1.0. The skeleton of
+// `std/heap.cca` and an empty `std/collection/` directory exist, but the
+// implementation is deferred. See ROADMAP.md §3.2 (Out of scope) and §4
+// (Milestones) for the v0.2.0 plan.
+//
+// In v0.1.0, you can still use raw C allocations through `import std.c;`
+// (c.malloc / c.free) for your own data structures.
+// ────────────────────────────────────────────────────────────────────────────
+
+// Collections
+// C^ has various types of collections:
+// hstring, array, vector, map(hashmap), set
+//
+// In type contexts, < and > are always parsed as generic brackets,
+// never as comparison operators. The compiler resolves ambiguity by
+// checking that < follows a known type/identifier name and > is
+// followed by (, ), ;, {, [, , or a type — making it unambiguous.
+
+// import styles:
+//   import std.collections;     -> collections.vec<i32>  (verbose)
+//   import std.collections.*;   -> vec<i32>              (wildcard)
+//   import std.collections.vec; -> vec<i32>              (single only)
+import std.collections.*;
+
+i32 main() {
+  // Heap allocated string: hstring
+  hstring mut msg = hstring.new();
+  msg.push("Hello, ");
+  msg.push("World!");
+
+  // Arrays
+  /*
+    Syntax:
+      TYPE[_] [MODIFIER] NAME = <[]/[VALUE, ...]>; -> inferred size
+      TYPE[<N>] [MODIFIER] NAME = <[]/[VALUE, ...]>; -> fixed size array
+  */
+  i32[_] my_arr = [1, 2, 3, 4]; // 0..=3 means 4 members
+  i32[2] arr2 = [1,2];// fixed size
+
+  // Vector
+  /*
+    Syntax:
+      vec<TYPE>
+  */
+  vec<i32> mut my_vec = [];
+
+  // Map
+  /*
+    Syntax:
+      map<KEY_TYPE, VAL_TYPE> ... = {KEY: VAL; ...};
+  */
+  map<string, i32> mut hash_map = {
+    "one": 1;
+    "two": 2;
+    // ... add as many as needed
+  };
+  // Access/modify
+  print("{d}", hash_map["one"]);
+  hash_map.append("three", 3);
+  hash_map["one"] = 10; // I know one != 10, just demonstrating modification
+
+  // Set
+  /*
+    Syntax:
+      set<TYPE>
+  */
+  set<i32> mut my_set = {1, 2, 3};
+  my_set.insert(4);
+}

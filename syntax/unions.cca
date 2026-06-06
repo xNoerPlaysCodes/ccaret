@@ -1,0 +1,48 @@
+// Unions: two flavors — plain (raw overlap) and tagged (discriminated)
+// Plain unions use semicolons like structs (typed named fields).
+// Tagged unions use VARIANT(TYPE) syntax with a hidden tag.
+
+/*
+  Syntax: Plain (raw memory overlap)
+    union NAME {
+      TYPE FIELD_NAME;
+      ...
+    }
+
+  Syntax: Tagged (discriminated, hidden tag)
+    union NAME {
+      VARIANT(TYPE, ...);
+      ...
+    }
+*/
+
+// Plain union — all fields share same memory
+union NumericData {
+  u32 raw_bits;
+  f32 as_float;
+  u8[4] bytes;
+}
+
+// Tagged union — compiler adds a hidden tag field
+union Option<T> {
+  Some(T);
+  None;
+}
+
+union Result<T, E> {
+  Ok(T);
+  Err(E);
+}
+
+i32 main() {
+  // plain union usage
+  NumericData mut data = NumericData{raw_bits = 0x40490FDB};
+  f32 pi = data.as_float;
+
+  // tagged union usage
+  Option<i32> mut val = Option.Some(42);
+  val = Option.None;       // same type, different variant
+
+  Result<i32, string> res = Result.Ok(200);
+  return 0;
+}

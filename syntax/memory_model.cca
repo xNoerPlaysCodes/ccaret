@@ -1,0 +1,104 @@
+// Memory model: value semantics, copy by default, explicit heap.
+// Stack values, safe refs T&, optional T?, raw pointers T*, slices T[],
+// fat arrays, defer, error unions, const, packed, sizeof, alignof, volatile.
+
+/*
+  Overview:
+    Stack:    TYPE NAME = VALUE;             -> default, copies on assign
+    Ref:      TYPE& NAME = VARIABLE;          -> safe alias, never null
+    Raw ptr:  TYPE* NAME = &VARIABLE;         -> nullable, unchecked
+    Null ptr: TYPE* NAME = null;              -> explicit null
+    Opt:      TYPE? NAME = try FUNC();        -> nullable, forces unwrap
+    Slice:    TYPE[] NAME = ARRAY[START..END]; -> fat view, bounds checked
+    Array:    TYPE[N] NAME = [...];           -> fat pointer, bounds checked
+    Const:    TYPE const NAME = VALUE;        -> compile-time constant
+    Packed:   packed struct NAME { ... };     -> no padding
+    Sizeof:   sizeof(TYPE)                    -> compile-time size
+    Alignof:  alignof(TYPE)                  -> compile-time alignment
+    Volatile: volatile TYPE* NAME = ADDR;     -> no optimisation
+
+  Unwrap optional:
+    TYPE val = OPT ?? @default;
+    TYPE val = OPT ?? FALLBACK;
+
+  Defer:
+    defer EXPR;
+    defer { ... };
+
+  Allocators (std.heap):
+    page, arena, pool, stack, c
+
+  Errors:
+    TYPE! NAME = try ALLOC_FUNC();
+*/
+
+import std.heap;
+
+struct Point {
+  i32 x;
+  i32 y;
+}
+
+packed struct PackedPoint {
+  i32 x;
+  i32 y;
+}
+
+i32 main() {
+  // 1. Stack — value semantics, copy on assign
+  i32 val = 10;
+  i32 copy = val;          // independent copy
+  string name = "C^";
+  Point p = Point{x = 1; y = 2};
+
+  // 2. Safe refs — non-null alias
+  i32& alias = val;
+  alias = 20;              // auto-deref
+
+  // 3. Raw pointers — nullable, unchecked
+  i32* ptr = &val;
+  i32 data = ptr.*;        // postfix deref
+  i32* nothing = null;     // zero value
+
+  // 4. Optional — safe nullable, must unwrap
+  i32? maybe = val;
+  i32 result = maybe ?? @default;   // 0 for i32
+  i32 custom = maybe ?? -1;         // explicit fallback
+
+  // 5. Slice — view into existing array
+  i32[4] arr = [1, 2, 3, 4];
+  i32[] slice = arr[0..2];
+  i32 first = slice[0];
+
+  // 6. Fat array — bounds checked at runtime
+  i32 x = arr[0];          // safe: checked at runtime
+
+  // 7. Compile-time constant
+  i32 const MAX = 1024;
+
+  // 8. Size / alignment queries
+  usize sz = sizeof(i32);   // 4
+  usize al = alignof(i32);  // 4
+
+  // 9. Volatile — MMIO
+  volatile u8* reg = (volatile u8*)0x4000;
+
+  // 10. Heap alloc with defer
+  void* data_ptr = std.heap.page.alloc(u8, 256);
+  defer std.heap.page.free(data_ptr);
+
+  // 11. Arena — bump allocator, bulk free
+  std.heap.arena mut arena = std.heap.arena.init(4096);
+  defer arena.deinit();
+  i32* chunk = arena.alloc(i32, 10);
+
+  // 12. Allocation can fail → error union
+  i32! large = std.heap.page.alloc(i32, 1_000_000_000);
+  i32* big = try large catch |e| {
+    print("OOM: {e}");
+    return -1;
+  };
+  defer std.heap.page.free(big);
+
+  return 0;
+}

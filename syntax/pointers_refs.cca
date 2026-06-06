@@ -1,0 +1,55 @@
+// Pointers and references: T* raw pointers, T& safe references
+// Postfix dereference ptr.* avoids prefix asterisk confusion.
+//
+// mut before * / &  -> mutable TARGET (can change what's pointed to)
+// mut after * / &   -> mutable BINDING (can reassign the pointer itself)
+//
+// T*        -> immutable target, immutable binding
+// T mut*    -> mutable target, immutable binding
+// T* mut    -> immutable target, mutable binding
+// T mut* mut -> mutable target, mutable binding
+//
+// Same for & references: T&, T mut&, T& mut, T mut& mut
+
+/*
+  Syntax: Pointers
+    TYPE [mut]* [mut] NAME = &VARIABLE;
+
+  Syntax: References
+    TYPE [mut]& [mut] NAME = VARIABLE;
+
+  Dereference: POINTER.*
+  Address-of:  &VARIABLE
+*/
+
+i32 main() {
+  i32 mut a = 10;
+  i32 mut b = 20;
+
+  // T*        -> immutable target, immutable binding
+  i32* ptr = &a;
+  i32 val = ptr.*;   // read only
+  // ptr = &b;       // no: binding is immutable
+
+  // T mut*    -> mutable target, immutable binding
+  i32 mut* mut_ptr = &a;
+  mut_ptr.* = 15;    // mutate the target
+  // mut_ptr = &b;   // no: binding is immutable
+
+  // T* mut    -> immutable target, mutable binding
+  i32* mut rebind = &a;
+  rebind = &b;       // point elsewhere
+  // rebind.* = 25;  // no: target is immutable
+
+  // T mut* mut -> mutable target, mutable binding
+  i32 mut* mut all = &a;
+  all.* = 30;        // mutate target
+  all = &b;          // rebind pointer
+
+  // Safe references (same rules, auto-deref)
+  i32& ref = a;            // immutable ref
+  i32 mut& mut_ref = a;    // mutable target
+  mut_ref = 50;            // auto-deref, mutates a
+
+  return 0;
+}

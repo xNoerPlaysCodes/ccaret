@@ -1,0 +1,60 @@
+// ────────────────────────────────────────────────────────────────────────────
+// DEFERRED TO v0.2.0+
+//
+// Tuples (anonymous grouped values) require new type-system machinery for
+// structural typing, destructuring, and multi-return. Not in v0.1.0. See
+// ROADMAP.md §3.2 and §4.
+//
+// In v0.1.0, return multiple values through an `out` parameter, a small
+// struct, or a tagged union.
+// ────────────────────────────────────────────────────────────────────────────
+
+// Tuples: anonymous grouped values accessed by index
+// No named fields — always .0, .1, .2, etc.
+
+/*
+  Syntax:
+    (TYPE_A, TYPE_B, ...) NAME = (VALUE_A, VALUE_B, ...);
+
+  Access:
+    NAME.0, NAME.1, NAME.2, ...
+
+  Return:
+    (TYPE_A, TYPE_B) fn() { return (VALUE_A, VALUE_B); }
+
+  Destructure:
+    (VAR_A, VAR_B) = TUPLE;
+*/
+
+// Basic tuple
+(i32, bool) packet = (200, true);
+
+// Mutable
+(i32, string) mut pair = (42, "hello");
+
+i32 main() {
+  // Index access
+  i32 code = packet.0;
+  bool flag = packet.1;
+
+  // Modify
+  pair.0 = 99;
+
+  // Nested
+  (i32, (bool, string)) nested = (1, (true, "yes"));
+  bool inner = nested.1.0;
+  string text = nested.1.1;
+
+  // Destructure
+  (i32 val, bool ok) = packet;
+  // val = 200, ok = true
+
+  // Return tuple
+  (i32, bool) get_status() {
+    return (0, true);
+  }
+
+  (i32 status, bool ready) = get_status();
+
+  return 0;
+}
